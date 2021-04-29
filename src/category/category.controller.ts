@@ -1,21 +1,45 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { Category } from './category.model';
 import { CategoryService } from './category.service';
 
-@Controller('category')
+@Controller('categories')
 export class CategoryController {
     constructor(
         private readonly categoryService:CategoryService
     ){}
 
     @Post()
-    create(@Body() category){
-       this.categoryService.create(category);
+    async create(@Body() category){
+       const newCategory = await this.categoryService.create(category);
+       return newCategory
+    }
+
+    @Delete(":id")
+    async deleteCategory(@Param('id') categoryId:string){
+        const response = await this.categoryService.deleteOne(categoryId);
+        return response;
     }
 
 
     @Get()
-    findAll():string{
-        return "je suis dans la routes category"
+    async AllCategory(){
+       const response = await this.categoryService.allCategories();
+       return response;
     }
+
+    @Get(":id")
+    async SingleCategorie(@Param('id') categoryId:string){
+        const response = await this.categoryService.singleCategory(categoryId);
+        return response;
+    }
+
+    @Patch(":id")
+    async UpdateCategory(
+        @Param("id") categoryId : string,
+        @Body() category : Category
+    ){
+        const response = await this.categoryService.updateCategory(categoryId,category);
+        return response;
+    }
+
 }
