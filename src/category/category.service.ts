@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import {Category} from "./category.model";
-import {Model} from "mongoose";
+import {Model, Mongoose,isValidObjectId} from "mongoose";
 
 
 @Injectable()
@@ -30,6 +30,13 @@ export class CategoryService {
 
     //delete Category service methode
     async deleteOne(categoryId):Promise<{status:boolean,message:string}>{
+
+        if(!isValidObjectId(categoryId)) {
+            return {
+                status:false,
+                message:"Invalid Id"
+            }
+        }
 
         try {
             const removedCategory =  await this.categoryModel.findByIdAndRemove(categoryId);
