@@ -66,6 +66,7 @@ ProductSchema.set('toJSON',{
 
 
 export interface Product extends mongoose.Document {
+    id:string,
     name:string,
     description:string,
     richDescription:string,

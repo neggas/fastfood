@@ -4,6 +4,7 @@ import {Model} from "mongoose";
 import { Category } from 'src/category/category.model';
 import {Product} from "./product.model";
 import {isValidObjectId} from "mongoose";
+import { response } from 'express';
 
 @Injectable()
 export class ProductService {
@@ -48,7 +49,7 @@ export class ProductService {
             products = await this.ProductModel.find().populate("category").exec();
   
         
-
+       
         if(!products) throw new NotFoundException("Not found any product");
         
         return products;
