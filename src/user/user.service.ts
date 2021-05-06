@@ -6,4 +6,9 @@ import {Model} from "mongoose";
 @Injectable()
 export class UserService {
     constructor(@InjectModel("User") private readonly UserModel : Model<User>){}
+
+    create(userDoc){
+        const {password} = userDoc;
+        console.log(password)
+    }
 }
