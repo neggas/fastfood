@@ -18,7 +18,8 @@ export class UserService {
        
         const user = await this.UserModel.findOne({email}).exec();
         if(user) throw new ConflictException("Cet email est liée dejà liée à un compte");
-       
+        
+        const salt = this.configService.get("SALT");
         const hassedPassword = await bcrypt.hash(password,10);
         userDoc.password = hassedPassword;
 
@@ -78,4 +79,6 @@ export class UserService {
            return updatedUser;
         }
     }
+
+
 }

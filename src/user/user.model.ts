@@ -57,7 +57,7 @@ export interface User extends mongoose.Document{
     id:string;
     name?:string;
     email?:string;
-    passwordHash?:string;
+    password?:string;
     street?:string;
     apartment?:string;
     city?:string;

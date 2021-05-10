@@ -35,4 +35,5 @@ export class UserController {
         const response = this.userService.updateUser(userId,userDoc);
         return response;
     }
+
 }
