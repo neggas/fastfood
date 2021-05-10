@@ -10,7 +10,7 @@ export const UserSchema = new mongoose.Schema({
         type:String,
         default:''
     },
-    passwordHash:{
+    password:{
         type:String,
         default:''
     },

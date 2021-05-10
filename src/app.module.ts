@@ -13,7 +13,7 @@ import { UserModule } from './user/user.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    MongooseModule.forRoot('mongodb://localhost/food'),
+    MongooseModule.forRoot('mongodb://localhost/food',{useFindAndModify:true}),
     ProductModule,
     CategoryModule,
     AuthModule,
