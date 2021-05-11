@@ -4,11 +4,13 @@ import { User } from '../user/user.model';
 import {Model,isValidObjectId} from "mongoose";
 import {UserCredentialDto} from "./DTO/user-credential";
 import * as bcrypt from "bcrypt";
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
     constructor(
-        @InjectModel("User") private readonly userModel : Model<User>
+        @InjectModel("User") private readonly userModel : Model<User>,
+        private readonly jwtService:JwtService
     ){}
 
     async login(userCredential:UserCredentialDto){
@@ -19,6 +21,10 @@ export class AuthService {
         const isMatch = await bcrypt.compare(password,user.password);
         if(!isMatch) throw new NotFoundException("password is incorrect");
 
-        return user;
+       const payload = {name:user.name,email:user.email};
+        const jwt = await this.jwtService.sign(payload);
+        return {
+            "access_token":jwt
+        };
     }
 }

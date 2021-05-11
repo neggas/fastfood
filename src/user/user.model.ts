@@ -66,3 +66,8 @@ export interface User extends mongoose.Document{
     phone?:number;
     isAdmin?:boolean;
 }
+
+export interface UserPayload{
+    name:string;
+    email:string;
+}
