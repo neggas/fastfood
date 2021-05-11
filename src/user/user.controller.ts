@@ -14,6 +14,7 @@ export class UserController {
     }
 
     @Get(':id')
+    @UseGuards(JwtAuthGuard)
     async getSingleUser(@Param('id') userId:string){
         const response = await this.userService.userById(userId);
         return response;
@@ -26,6 +27,7 @@ export class UserController {
     }
 
     @Delete(':id')
+    @UseGuards(JwtAuthGuard)
     async bannUser(@Param('id') userId:String){
         const response = this.userService.deleteOne(userId);
         return response;
@@ -33,6 +35,7 @@ export class UserController {
 
 
     @Patch(':id')
+    @UseGuards(JwtAuthGuard)
     async updateUser(@Param('id') userId, @Body() userDoc){
         const response = this.userService.updateUser(userId,userDoc);
         return response;
