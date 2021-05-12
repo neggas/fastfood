@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './user.model';
 import {Model,isValidObjectId} from "mongoose";
@@ -43,12 +43,16 @@ export class UserService {
         return findUser;
     }
 
-    async AllUsers():Promise<User[]>{
+    async AllUsers(user:User):Promise<User[]>{
+
+        if(!user.isAdmin) throw new UnauthorizedException();
         const users = await this.UserModel.find().exec();
         return users;
     }
 
-    async userById(userId):Promise<User>{
+    async userById(userId,user:User):Promise<User>{
+
+        if(!(user.isAdmin || user.id == userId)) throw new UnauthorizedException();
         const  findUser = await this.SingleUser(userId);
         return findUser;
     }
