@@ -4,6 +4,7 @@ import { Request } from 'express';
 import { Product } from './product.model';
 import { ProductService } from './product.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { User } from 'src/user/decorators/user.decorator';
 
 @Controller('products')
 export class ProductController {
@@ -12,8 +13,8 @@ export class ProductController {
 
     @Post()
     @UseGuards(JwtAuthGuard)
-    async create(@Body() product : Product){
-        const response = await this.productService.create(product);
+    async create(@Body() product : Product,@User() User){
+        const response = await this.productService.create(product,User);
         return response;
     }
 
@@ -40,30 +41,30 @@ export class ProductController {
 
     @Patch(":id")
     @UseGuards(JwtAuthGuard)
-    async updateProduct(@Param("id") productId:string, @Body() updateProduct:Product){
+    async updateProduct(@Param("id") productId:string, @Body() updateProduct:Product,@User() User){
         
-        const response = await this.productService.updateProduct(productId,updateProduct);
+        const response = await this.productService.updateProduct(productId,updateProduct,User);
         return response;
     }
 
     @Delete(":id")
     @UseGuards(JwtAuthGuard)
-    async deleteCategory(@Param('id') categoryId:string){
-        const response = await this.productService.deleteOne(categoryId);
+    async deleteCategory(@Param('id') categoryId:string,@User() User){
+        const response = await this.productService.deleteOne(categoryId,User);
         return response;
     }
 
     @Get("get/count")
     @UseGuards(JwtAuthGuard)
-    async getCountProduct(){
-        const countedProduct = await this.productService.countProduct();
+    async getCountProduct(@User() User){
+        const countedProduct = await this.productService.countProduct(User);
         return countedProduct;
     }
 
     @Get("featured/:count")
     @UseGuards(JwtAuthGuard)
-    async getFeaturedProduct(@Param("count") count){
-        const response = await this.productService.getFeaturedPoducts(+count);
+    async getFeaturedProduct(@Param("count") count,@User() User){
+        const response = await this.productService.getFeaturedPoducts(+count,User);
         return response;
     }
 }

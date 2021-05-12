@@ -31,16 +31,16 @@ export class UserController {
 
     @Delete(':id')
     @UseGuards(JwtAuthGuard)
-    async bannUser(@Param('id') userId:String){
-        const response = this.userService.deleteOne(userId);
+    async bannUser(@Param('id' ) userId:String , @User() User){
+        const response = this.userService.deleteOne(userId,User);
         return response;
     }
 
 
     @Patch(':id')
     @UseGuards(JwtAuthGuard)
-    async updateUser(@Param('id') userId, @Body() userDoc){
-        const response = this.userService.updateUser(userId,userDoc);
+    async updateUser(@Param('id') userId, @Body() userDoc,@User() User){
+        const response = this.userService.updateUser(userId,userDoc,User);
         return response;
     }
 

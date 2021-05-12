@@ -57,15 +57,22 @@ export class UserService {
         return findUser;
     }
 
-    async deleteOne(userId){
+    async deleteOne(userId,user:User){
+
+        if(!(user.isAdmin || user.id == userId)) throw new UnauthorizedException()
+
         const  findUser = await this.SingleUser(userId);
-        if(findUser){
-            const deletedUser = this.UserModel.findByIdAndDelete(userId);
-            return deletedUser;
-        }
+        if(!findUser) throw new NotFoundException();
+
+        const deletedUser = this.UserModel.findByIdAndDelete(userId);
+        return deletedUser;
+        
     }
 
-    async updateUser(userId,userDoc){
+    async updateUser(userId,userDoc,user:User){
+
+        if(!(user.isAdmin || user.id == userId)) throw new UnauthorizedException()
+
         const {password} = userDoc;
         const  findUser = await this.SingleUser(userId);
         let hashedPassword : string;

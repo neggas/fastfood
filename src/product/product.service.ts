@@ -1,10 +1,11 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import {Model} from "mongoose";
 import { Category } from 'src/category/category.model';
 import {Product} from "./product.model";
 import {isValidObjectId} from "mongoose";
 import { response } from 'express';
+import { User } from 'src/user/user.model';
 
 @Injectable()
 export class ProductService {
@@ -13,7 +14,10 @@ export class ProductService {
         @InjectModel("Category")  private readonly categoryModel : Model<Category>
     ){}
 
-    async create(product):Promise<Product>{
+    async create(product,user:User):Promise<Product>{
+
+        if(!user.isAdmin) throw new UnauthorizedException()
+
         const category = await this.categoryModel.findById(product.category).exec();
         
         if(!category){
@@ -65,7 +69,9 @@ export class ProductService {
         return product;
    }
 
-   async updateProduct(productId,updateProduct):Promise<Product | {status:boolean,message:string}>{
+   async updateProduct(productId,updateProduct,user:User):Promise<Product | {status:boolean,message:string}>{
+
+       if(!user.isAdmin) throw new UnauthorizedException()
        const product = await this.ProductModel.findById(productId).exec();
 
        if(!product){
@@ -85,7 +91,9 @@ export class ProductService {
        return updatedProduct;
    }
 
-    async deleteOne(productId):Promise<{status:boolean,message:string}>{
+    async deleteOne(productId,user:User):Promise<{status:boolean,message:string}>{
+
+        if(!user.isAdmin) throw new UnauthorizedException()
 
         if(!isValidObjectId(productId)){
             return{
@@ -116,7 +124,9 @@ export class ProductService {
     }
 
 
-    async countProduct():Promise<{status:boolean,message:string} |{productCount:number} >{
+    async countProduct(user:User):Promise<{status:boolean,message:string} |{productCount:number} >{
+
+        if(!user.isAdmin) throw new UnauthorizedException()
         const countedProducts = await this.ProductModel.countDocuments((count) => count).exec();
 
         if(!countedProducts){
@@ -131,8 +141,9 @@ export class ProductService {
         };
     }
 
-    async getFeaturedPoducts(count):Promise<{status:boolean} | Product[]>{
+    async getFeaturedPoducts(count,user:User):Promise<{status:boolean} | Product[]>{
 
+        if(!user.isAdmin) throw new UnauthorizedException()
         let counted = count ? count : 0;
         const products = await this.ProductModel.find({isFeatured:true}).limit(+counted);
 
