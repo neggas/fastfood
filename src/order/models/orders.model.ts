@@ -81,11 +81,11 @@ export interface Orders extends mongoose.Document{
     "orderItems" : [
         {
             "quantity": 3,
-            "product" : "5fcfc406ae79b0a6a90d2585"
+            "product" : "608bc2a8b674503530854928"
         },
         {
             "quantity": 2,
-            "product" : "5fd293c7d3abe7295b1403c4"
+            "product" : "608bd9f579955d1e9424b4d6"
         }
     ],
     "shippingAddress1" : "Flowers Street , 45",

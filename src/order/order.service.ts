@@ -1,8 +1,9 @@
 import { Orders, OrdersSchema } from './models/orders.model';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotAcceptableException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { OrderItem } from './models/orderItems.model';
+import {isValidObjectId} from "mongoose";
 
 @Injectable()
 export class OrderService {
@@ -37,6 +38,20 @@ export class OrderService {
 
         return newOrder;
 
+    }
+
+    async Detail(orderId){
+
+        if(!isValidObjectId(orderId)) 
+            throw new NotAcceptableException(`${orderId} is not match with order id`);
+        
+        const order = await this.order.findById(orderId)
+        .populate("user","name")
+        .populate({path:"orderItems",populate:{path:"product",populate:"category"}})
+        .exec();
+        if(!order) throw new NotFoundException();
+
+        return order;
     }
     
 }   
