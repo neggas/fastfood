@@ -53,5 +53,31 @@ export class OrderService {
 
         return order;
     }
+
+    async UpdateStatus(orderId,status){
+        if(!isValidObjectId(orderId)) 
+            throw new NotAcceptableException(`${orderId} is not match with order id`);
+        const order = await this.order.findByIdAndUpdate({_id:orderId},{status},{new:true}).exec();
+
+        if(!order) throw new NotFoundException();
+
+        return order;
+    }
+
+    async Delete(orderId){
+        if(!isValidObjectId(orderId)) 
+            throw new NotAcceptableException(`${orderId} is not match with order id`);
+        const deletedOrder = await this.order.findByIdAndRemove({_id:orderId}).exec();
+
+        if(!deletedOrder) throw new NotFoundException();
+
+        const {orderItems} = deletedOrder;
+
+        Promise.all(orderItems.map(async(ord)=>{
+            await this.ordertem.findByIdAndRemove({_id:ord}).exec();
+        }))
+
+        return deletedOrder;
+    }
     
 }   

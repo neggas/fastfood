@@ -14,7 +14,7 @@ import { OrderModule } from './order/order.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    MongooseModule.forRoot('mongodb://localhost/food',{useFindAndModify:true}),
+    MongooseModule.forRoot('mongodb://localhost/food',{useFindAndModify:false}),
     ProductModule,
     CategoryModule,
     AuthModule,
