@@ -1,9 +1,10 @@
 import { Orders, OrdersSchema } from './models/orders.model';
-import { Injectable, NotAcceptableException, NotFoundException } from '@nestjs/common';
+import { Injectable, NotAcceptableException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { OrderItem } from './models/orderItems.model';
 import {isValidObjectId} from "mongoose";
+import { User } from 'src/user/user.model';
 
 @Injectable()
 export class OrderService {
@@ -12,7 +13,9 @@ export class OrderService {
         @InjectModel("OrderItem") private readonly ordertem : Model<OrderItem>
     ){}
 
-    async All(){
+    async All(user:User){
+
+        if(!user.isAdmin) throw new UnauthorizedException();
         const orders = await this.order.find().exec();
         if(!orders) throw new NotFoundException();
 
@@ -30,7 +33,17 @@ export class OrderService {
         }))
 
         orderItems = await orderItemsId;
+
+        const totalPrices = await Promise.all(orderItems.map(async(ord)=>{
+          const orderItem = await this.ordertem.findById({_id:ord}).populate("product","price").exec();
+          const totalprice = orderItem.product.price*orderItem.quantity;
+          return totalprice;
+        }))
+
+        const totalPrice = totalPrices.reduce((a,b)=>a+b,0);
         orderDoc.orderItems = orderItems;
+        orderDoc.totalPrice = totalPrice;
+
         let newOrder = new this.order({...orderDoc});
         newOrder = await newOrder.save();
 
@@ -54,7 +67,9 @@ export class OrderService {
         return order;
     }
 
-    async UpdateStatus(orderId,status){
+    async UpdateStatus(orderId,status,user:User){
+
+        if(!user.isAdmin) throw new UnauthorizedException();
         if(!isValidObjectId(orderId)) 
             throw new NotAcceptableException(`${orderId} is not match with order id`);
         const order = await this.order.findByIdAndUpdate({_id:orderId},{status},{new:true}).exec();
@@ -64,7 +79,9 @@ export class OrderService {
         return order;
     }
 
-    async Delete(orderId){
+    async Delete(orderId,user:User){
+       
+        if(!user.isAdmin) throw new UnauthorizedException();
         if(!isValidObjectId(orderId)) 
             throw new NotAcceptableException(`${orderId} is not match with order id`);
         const deletedOrder = await this.order.findByIdAndRemove({_id:orderId}).exec();
