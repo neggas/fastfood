@@ -1,7 +1,7 @@
 
 import * as mongoose from "mongoose";
-import { Product } from "src/product/product.model";
 import { User } from "src/user/user.model";
+import {OrderItem} from "src/order/models/orderItems.model";
 
 export const OrdersSchema = new mongoose.Schema({
     orderItems:[{
@@ -12,11 +12,11 @@ export const OrdersSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"User"
     },
-    shippingAdress1:{
+    shippingAddress1:{
         type:String,
         default:''
     },
-    shippingAdress2:{
+    shippingAddress2:{
         type:String,
         default:''
     },
@@ -59,12 +59,12 @@ OrdersSchema.set('toJSON',{
     virtuals:true
 })
 
-export interface OrderItem extends mongoose.Document{
+export interface Orders extends mongoose.Document{
     id:string;
     orderItems:OrderItem[];
     user:User;
-    shippingAdress1:string;
-    shippingAdress2?:string;
+    shippingAddress1:string;
+    shippingAddress2?:string;
     city:string;
     zip:string;
     country:string;
@@ -94,7 +94,7 @@ export interface OrderItem extends mongoose.Document{
     "zip": "00000",
     "country": "Czech Republic",
     "phone": "+420702241333",
-    "user": "5fd51bc7e39ba856244a3b44"
+    "user": "609b2288a222953c78e8f2ec"
 }
 
  */
